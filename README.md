@@ -1,5 +1,7 @@
 # GibbsSeaWater
 
+<img src="https://travis-ci.org/njwilson23/GibbsSeaWater.jl.svg" alt="Travis CI status">
+
 This is a Julia wrapper for the [Gibbs Seawater Oceanographic Toolbox
 (GSW)](http://www.teos-10.org/software.htm#1), which implements the TEOS-10
 subroutines for the thermodynamic seawater equation of state.
