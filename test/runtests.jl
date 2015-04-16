@@ -180,11 +180,6 @@ testTolerances = [:abs_pressure_from_p => 2.300031483173370e-004,
                       :z_from_p => 2.287223921371151e-008]
 
 # Test data
-sa_profile = [35.5e0, 35.7e0, 35.6e0]
-ct_profile = [12.5e0, 15e0, 10e0]
-p_profile = [00e0, 50e0, 100e0]
-lat_profile = [10e0, 10e0, 10e0]
-
 sp =  35.5e0
 sa = 35.7e0
 sstar = 35.5e0
@@ -214,8 +209,12 @@ function run_gsw_test(funcsym, expected, args...)
 end
 
 # Tests copied from gsw_check_functions.c
+
+# Practical Salinity, PSS-78
 run_gsw_test(:sp_from_c, 35.500961780774482e0, c,t,p);
 run_gsw_test(:c_from_sp, 43.598945605280484e0, sp,t,p);
+
+# Absolute Salinity, Preformed Salinity and Conservative Temperature
 run_gsw_test(:sa_from_sp, 35.671358392019094e0, sp,p,lon,lat);
 run_gsw_test(:sstar_from_sp, 35.866946753006239e0, sa,p,lon,lat);
 run_gsw_test(:ct_from_t,  14.930280459895560e0, sa, t, p);
@@ -243,18 +242,20 @@ run_gsw_test(:alpha, 2.62460550806784356e-4, sa,ct,p);
 run_gsw_test(:beta, 7.29314455934463365e-4, sa,ct,p);
 run_gsw_test(:alpha_on_beta, 0.359872958325632e0, sa,ct,p);
 
-# gsw_rho_first_derivatives(sa,ct,p,&drho_dsa,&drho_dct,&drho_dp);
-# drho_dsa_error = fabs(drho_dsa - 0.748609372480258e0);
-# drho_dct_error = fabs(drho_dct + 0.269404269504765e0);
-# drho_dp_error = fabs(drho_dp - 4.287533235942749e-7);
-# printf("\t%-32.32s  ........  ", "gsw_rho_first_derivatives");
-# if (drho_dsa_error < drho_dsa_ca && drho_dct_error < drho_dct_ca
-#     && drho_dp_error < drho_dp_ca)
-#         printf("passed\n");
-#     else {
-#         printf("failed\n");
-#         gsw_error_flag      = 1;
-# }
+let
+    # WIP: rho_first_derivatives expects a pointer, so need to pass an array for now
+    drho_dsa = Float64[0.0]
+    drho_dct = Float64[0.0]
+    drho_dp = Float64[0.0]
+
+    rho_first_derivatives(sa, ct, p, drho_dsa, drho_dct, drho_dp);
+    drho_dsa_error = abs(drho_dsa[1] - 0.748609372480258e0);
+    drho_dct_error = abs(drho_dct[1] + 0.269404269504765e0);
+    drho_dp_error = abs(drho_dp[1] - 4.287533235942749e-7);
+    @test drho_dsa_error < testTolerances[:drho_dsa]
+    @test drho_dct_error < testTolerances[:drho_dct]
+    @test drho_dp_error < testTolerances[:drho_dp]
+end
 
 run_gsw_test(:specvol, 9.74225654586897711e-4, sa,ct,p);
 run_gsw_test(:specvol_anom, 2.90948181201264571e-6, sa,ct,p);
@@ -274,53 +275,78 @@ run_gsw_test(:dynamic_enthalpy, 2924.5137975399025e0, sa,ct,p);
 run_gsw_test(:sa_from_rho, sa, ρ,ct,p);
 
 # Water column properties, based on the 48-term expression for density
-# gsw_nsquared(sa_profile,ct_profile,p_profile,lat_profile,nz,n2, p_mid_n2);
-# n2_error[0] = fabs(n2[0] + 0.070960392693051e-3);
-# n2_error[1] = fabs(n2[1] - 0.175435821615983e-3);
-# p_mid_n2_error[0] = fabs(p_mid_n2[0] - 25e0);
-# p_mid_n2_error[1] = fabs(p_mid_n2[1] - 75e0);
-# printf("\t%-32.32s  ........  ", "gsw_nsquared");
-# if (n2_error[0] < n2_ca && n2_error[1] < n2_ca &&
-#     p_mid_n2_error[0] < p_mid_n2_ca && p_mid_n2_error[1] < p_mid_n2_ca)
-#         printf("passed\n");
-#     else {
-#         printf("failed\n");
-#         gsw_error_flag      = 1;
-# }
+let
+    nz = 3
+    sa_profile = [35.5e0, 35.7e0, 35.6e0]
+    ct_profile = [12.5e0, 15e0, 10e0]
+    p_profile = [00e0, 50e0, 100e0]
+    lat_profile = [10e0, 10e0, 10e0]
 
-# gsw_turner_rsubrho(sa_profile,ct_profile,p_profile,nz,tu, rsubrho,p_mid_tursr);
-# tu_error[0] = fabs(tu[0] + 1.187243981606485e2);
-# tu_error[1] = fabs(tu[1] - 0.494158257088517e2);
-# rsubrho_error[0] = fabs(rsubrho[0] - 3.425146897090065e0);
-# rsubrho_error[1] = fabs(rsubrho[1] - 12.949399443139164e0);
-# p_mid_tursr_error[0] = fabs(p_mid_tursr[0] - 25e0);
-# p_mid_tursr_error[1] = fabs(p_mid_tursr[1] - 75e0);
-# printf("\t%-32.32s  ........  ", "gsw_turner_rsubrho");
-# if (tu_error[0] < tu_ca && tu_error[1] < tu_ca &&  
-#     rsubrho_error[0] < rsubrho_ca && rsubrho_error[1] < rsubrho_ca &&  
-#     p_mid_tursr_error[0] < p_mid_tursr_ca &&
-#     p_mid_tursr_error[1] < p_mid_tursr_ca)
-#         printf("passed\n");
-#     else {
-#         printf("failed\n");
-#         gsw_error_flag      = 1;
-# }
-# gsw_ipv_vs_fnsquared_ratio(sa_profile,ct_profile,p_profile,nz,
-# 				ipvfn2,p_mid_ipvfn2);
-# ipvfn2_error[0] = fabs(ipvfn2[0] - 0.996783975249010e0);
-# ipvfn2_error[1] = fabs(ipvfn2[1] - 0.992112251478320e0);
-# p_mid_ipvfn2_error[0] = fabs(p_mid_ipvfn2[0] - 25e0);
-# p_mid_ipvfn2_error[1] = fabs(p_mid_ipvfn2[1] - 75e0);
-# printf("\t%-32.32s  ........  ", "gsw_ipv_vs_fnsquared_ratio");
-# if (ipvfn2_error[0] < ipvfn2_ca && 
-#     ipvfn2_error[1] < ipvfn2_ca && 
-#     p_mid_ipvfn2_error[0] < p_mid_ipvfn2_ca && 
-#     p_mid_ipvfn2_error[1] < p_mid_ipvfn2_ca)
-#         printf("passed\n");
-#     else {
-#         printf("failed\n");
-#         gsw_error_flag      = 1;
-# }
+    n2 = zeros(Float64, 2)
+    n2_error = zeros(Float64, 2)
+    p_mid_n2 = zeros(Float64, 2)
+    p_mid_n2_error = zeros(Float64, 2)
+
+    nsquared(sa_profile, ct_profile, p_profile, lat_profile, nz, n2, p_mid_n2);
+    n2_error[1] = abs(n2[1] + 0.070960392693051e-3)
+    n2_error[2] = abs(n2[2] - 0.175435821615983e-3)
+    p_mid_n2_error[1] = abs(p_mid_n2[1] - 25e0);
+    p_mid_n2_error[2] = abs(p_mid_n2[2] - 75e0);
+    @test n2_error[1] < testTolerances[:n2]
+    @test n2_error[1] < testTolerances[:n2]
+    @test p_mid_n2_error[1] < testTolerances[:p_mid_n2]
+    @test p_mid_n2_error[2] < testTolerances[:p_mid_n2]
+end
+
+let
+    sa_profile = [35.5e0, 35.7e0, 35.6e0]
+    ct_profile = [12.5e0, 15e0, 10e0]
+    p_profile = [00e0, 50e0, 100e0]
+    nz = 3
+
+    tu = zeros(Float64, 2)
+    tu_error = zeros(Float64, 2)
+    rsubrho = zeros(Float64, 2)
+    rsubrho_error = zeros(Float64, 2)
+    p_mid_tursr = zeros(Float64, 2)
+    p_mid_tursr_error = zeros(Float64, 2)
+
+    turner_rsubrho(sa_profile, ct_profile, p_profile, nz, tu, rsubrho, p_mid_tursr);
+    tu_error[1] = abs(tu[1] + 1.187243981606485e2);
+    tu_error[2] = abs(tu[2] - 0.494158257088517e2);
+    rsubrho_error[1] = abs(rsubrho[1] - 3.425146897090065e0);
+    rsubrho_error[2] = abs(rsubrho[2] - 12.949399443139164e0);
+    p_mid_tursr_error[1] = abs(p_mid_tursr[1] - 25e0);
+    p_mid_tursr_error[2] = abs(p_mid_tursr[2] - 75e0);
+    @test tu_error[1] < testTolerances[:tu]
+    @test tu_error[2] < testTolerances[:tu]
+    @test rsubrho_error[1] < testTolerances[:rsubrho]
+    @test rsubrho_error[2] < testTolerances[:rsubrho]
+    @test p_mid_tursr_error[1] < testTolerances[:p_mid_tursr]
+    @test p_mid_tursr_error[2] < testTolerances[:p_mid_tursr]
+end
+
+let
+    sa_profile = [35.5e0, 35.7e0, 35.6e0]
+    ct_profile = [12.5e0, 15e0, 10e0]
+    p_profile = [00e0, 50e0, 100e0]
+    nz = 3
+
+    ipvfn2 = zeros(Float64, 2)
+    ipvfn2_error = zeros(Float64, 2)
+    p_mid_ipvfn2 = zeros(Float64, 2)
+    p_mid_ipvfn2_error = zeros(Float64, 2)
+
+    ipv_vs_fnsquared_ratio(sa_profile, ct_profile, p_profile, nz, ipvfn2, p_mid_ipvfn2)
+    ipvfn2_error[1] = abs(ipvfn2[1] - 0.996783975249010e0);
+    ipvfn2_error[2] = abs(ipvfn2[2] - 0.992112251478320e0);
+    p_mid_ipvfn2_error[1] = abs(p_mid_ipvfn2[1] - 25e0);
+    p_mid_ipvfn2_error[2] = abs(p_mid_ipvfn2[2] - 75e0);
+    @test ipvfn2_error[1] < testTolerances[:ipvfn2]
+    @test ipvfn2_error[2] < testTolerances[:ipvfn2]
+    @test p_mid_ipvfn2_error[1] < testTolerances[:p_mid_ipvfn2]
+    @test p_mid_ipvfn2_error[2] < testTolerances[:p_mid_ipvfn2]
+end
 
 # Freezing temperatures
 run_gsw_test(:ct_freezing, -2.1801450326174852e0, sa,p,saturation_fraction);

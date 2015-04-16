@@ -22,11 +22,11 @@ const _MODULEPATH = Pkg.dir("GibbsSeaWater")
 const _LIBGSWPATH = joinpath(_MODULEPATH, "deps/build/libgswteos-10")
 
 function add_barrier(input_data, lon, lat, long_grid, lat_grid, dlong_grid, dlat_grid, output_data)
-    return ccall((:gsw_add_barrier, _LIBGSWPATH), Void, (Float64, Float64, Float64, Float64, Float64, Float64, Float64, Float64), pointer(input_data), lon, lat, long_grid, lat_grid, dlong_grid, dlat_grid, pointer(output_data))
+    return ccall((:gsw_add_barrier, _LIBGSWPATH), Void, (Ptr{Float64}, Float64, Float64, Float64, Float64, Float64, Float64, Ptr{Float64}), pointer(input_data), lon, lat, long_grid, lat_grid, dlong_grid, dlat_grid, pointer(output_data))
 end
 
 function add_mean(data_in, lon, lat, data_out)
-    return ccall((:gsw_add_mean, _LIBGSWPATH), Void, (Float64, Float64, Float64, Float64), pointer(data_in), lon, lat, pointer(data_out))
+    return ccall((:gsw_add_mean, _LIBGSWPATH), Void, (Ptr{Float64}, Float64, Float64, Ptr{Float64}), pointer(data_in), lon, lat, pointer(data_out))
 end
 
 function adiabatic_lapse_rate_from_ct(sa, ct, p)
@@ -134,7 +134,7 @@ function hill_ratio_at_sp2(t)
 end
 
 function indx(x, n, z)
-    return ccall((:gsw_indx, _LIBGSWPATH), Int64, (Float64, Int64, Float64), pointer(x), n, z)
+    return ccall((:gsw_indx, _LIBGSWPATH), Int64, (Ptr{Float64}, Int64, Float64), pointer(x), n, z)
 end
 
 function internal_energy(sa, ct, p)
@@ -142,7 +142,7 @@ function internal_energy(sa, ct, p)
 end
 
 function ipv_vs_fnsquared_ratio(sa, ct, p, nz, ipv_vs_fnsquared_ratio, p_mid)
-    return ccall((:gsw_ipv_vs_fnsquared_ratio, _LIBGSWPATH), Void, (Float64, Float64, Float64, Int64, Float64, Float64), pointer(sa), pointer(ct), pointer(p), nz, pointer(ipv_vs_fnsquared_ratio), pointer(p_mid))
+    return ccall((:gsw_ipv_vs_fnsquared_ratio, _LIBGSWPATH), Void, (Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Int64, Ptr{Float64}, Ptr{Float64}), pointer(sa), pointer(ct), pointer(p), nz, pointer(ipv_vs_fnsquared_ratio), pointer(p_mid))
 end
 
 function kappa(sa, ct, p)
@@ -166,7 +166,7 @@ function latentheat_melting(sa, p)
 end
 
 function nsquared(sa, ct, p, lat, nz, n2, p_mid)
-    return ccall((:gsw_nsquared, _LIBGSWPATH), Void, (Float64, Float64, Float64, Float64, Int64, Float64, Float64), pointer(sa), pointer(ct), pointer(p), pointer(lat), nz, pointer(n2), pointer(p_mid))
+    return ccall((:gsw_nsquared, _LIBGSWPATH), Void, (Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Int64, Ptr{Float64}, Ptr{Float64}), pointer(sa), pointer(ct), pointer(p), pointer(lat), nz, pointer(n2), pointer(p_mid))
 end
 
 function pot_rho_t_exact(sa, t, p, p_ref)
@@ -190,7 +190,7 @@ function rho(sa, ct, p)
 end
 
 function rho_first_derivatives(sa, ct, p, drho_dsa, drho_dct, drho_dp)
-    return ccall((:gsw_rho_first_derivatives, _LIBGSWPATH), Void, (Float64, Float64, Float64, Float64, Float64, Float64), sa, ct, p, pointer(drho_dsa), pointer(drho_dct), pointer(drho_dp))
+    return ccall((:gsw_rho_first_derivatives, _LIBGSWPATH), Void, (Float64, Float64, Float64, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), sa, ct, p, pointer(drho_dsa), pointer(drho_dct), pointer(drho_dp))
 end
 
 function rho_t_exact(sa, t, p)
@@ -310,11 +310,11 @@ function thermobaric(sa, ct, p)
 end
 
 function turner_rsubrho(sa, ct, p, nz, tu, rsubrho, p_mid)
-    return ccall((:gsw_turner_rsubrho, _LIBGSWPATH), Void, (Float64, Float64, Float64, Int64, Float64, Float64, Float64), pointer(sa), pointer(ct), pointer(p), nz, pointer(tu), pointer(rsubrho), pointer(p_mid))
+    return ccall((:gsw_turner_rsubrho, _LIBGSWPATH), Void, (Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Int64, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}), pointer(sa), pointer(ct), pointer(p), nz, pointer(tu), pointer(rsubrho), pointer(p_mid))
 end
 
 function xinterp1(x, y, n, x0)
-    return ccall((:gsw_xinterp1, _LIBGSWPATH), Float64, (Float64, Float64, Int64, Float64), pointer(x), pointer(y), n, x0)
+    return ccall((:gsw_xinterp1, _LIBGSWPATH), Float64, (Ptr{Float64}, Ptr{Float64}, Int64, Float64), pointer(x), pointer(y), n, x0)
 end
 
 function z_from_p(p, lat)
