@@ -8,7 +8,13 @@ cd(build, "src/gsw_c_v3.03/")
 if ~isdir("build")
     mkdir("build")
 end
-run(`cp src/gsw_c_v3.03/libgswteos-10.so build/libgswteos-10.so`)
+
+ext = @linux? (".so" : @osx? ( ".dylib" : @windows? ( ".dll" : "" )))
+if ext == ""
+    error("Platform not linux, OS X, or Windows")
+end
+
+run(`cp $("src/gsw_c_v3.03/libgswteos-10"*ext) $("src/gsw_c_v3.03/libgswteos-10.so"*ext)`)
 
 # using BinDeps
 # 
