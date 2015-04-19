@@ -14,7 +14,7 @@ if ext == ""
     error("Platform not linux, OS X, or Windows")
 end
 
-run(`cp $("src/gsw_c_v3.03/libgswteos-10"*ext) $("src/gsw_c_v3.03/libgswteos-10.so"*ext)`)
+run(`cp $("src/gsw_c_v3.03/libgswteos-10"*ext) $("libgswteos-10"*ext)`)
 
 # using BinDeps
 # 
