@@ -15,7 +15,7 @@ The current included GSW version is 3.03.
 Installation should work with
 
 ```julia
-Pkg.clone(git@github.com:njwilson23/GibbsSeaWater.jl.git)
+Pkg.add("GibbsSeaWater")
 ```
 
 provided that `make` and a C compiler are available.
