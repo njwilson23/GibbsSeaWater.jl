@@ -30,7 +30,7 @@ and conservative temperature,
 ```julia
 import GibbsSeaWater
 # Sp = 34, pres = 150 dbar, lon = -65, lat = 40
-ct = GibbsSeaWater.sa_from_sp(34.0, 150.0, -65.0, 40.0)  
+Sa = GibbsSeaWater.sa_from_sp(34.0, 150.0, -65.0, 40.0)  
 ```
 
 For more information, see the GSW documentation at
