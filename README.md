@@ -1,6 +1,8 @@
 # GibbsSeaWater
 
-<img src="https://travis-ci.org/njwilson23/GibbsSeaWater.jl.svg" alt="Travis CI status">
+<a href="https://travis-ci.org/njwilson23/GibbsSeaWater.jl">
+    <img src="https://travis-ci.org/njwilson23/GibbsSeaWater.jl.svg" alt="Travis CI status">
+</a>
 
 This is a Julia wrapper for the [Gibbs Seawater Oceanographic Toolbox
 (GSW)](http://www.teos-10.org/software.htm#1), which implements the TEOS-10
