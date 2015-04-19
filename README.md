@@ -26,8 +26,8 @@ I'd be happy to accept pull requests.
 
 ## Usage
 
-All GSW 3.03 functions are available. For example, to convert between potential
-and conservative temperature,
+All GSW 3.03 functions are available. For example, to convert between practical
+salinity (PSS-78) and absolute salinity (TEOS-10),
 
 ```julia
 import GibbsSeaWater
