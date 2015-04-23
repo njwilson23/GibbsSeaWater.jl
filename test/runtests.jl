@@ -1,7 +1,7 @@
 using GibbsSeaWater
 using Base.Test
 
-testTolerances = [:abs_pressure_from_p => 2.300031483173370e-004,
+testTolerances = Dict(:abs_pressure_from_p => 2.300031483173370e-004,
                       :adiabatic_lapse_rate_from_ct => 5.699743845487985e-019,
                       :adiabatic_lapse_rate_from_t => 5.699738675609156e-019,
                       :adiabatic_lapse_rate_t_exact => 5.699738675609156e-019,
@@ -177,7 +177,7 @@ testTolerances = [:abs_pressure_from_p => 2.300031483173370e-004,
                       :t_maxdensity_exact => 6.274447628129565e-011,
                       :tu => 2.190718007000214e-008,
                       :z_from_depth => 2.287223921371151e-008,
-                      :z_from_p => 2.287223921371151e-008]
+                      :z_from_p => 2.287223921371151e-008)
 
 # Test data
 sp =  35.5e0

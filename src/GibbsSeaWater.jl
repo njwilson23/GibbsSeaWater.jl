@@ -17,9 +17,13 @@ export add_barrier, add_mean, adiabatic_lapse_rate_from_ct, alpha,
        sstar_from_sa, sstar_from_sp, t_freezing, t_from_ct, thermobaric,
        turner_rsubrho, xinterp1, z_from_p
 
-# package code goes here
+ext = @linux? (".so" : @osx? ( ".dylib" : @windows? ( ".dll" : "" )))
+if ext == ""
+    error("Platform not linux, OS X, or Windows")
+end
+
 const _MODULEPATH = Pkg.dir("GibbsSeaWater")
-const _LIBGSWPATH = joinpath(_MODULEPATH, "deps/build/libgswteos-10")
+const _LIBGSWPATH = joinpath(_MODULEPATH, "deps/build/libgswteos-10"*ext)
 
 function add_barrier(input_data, lon, lat, long_grid, lat_grid, dlong_grid, dlat_grid, output_data)
     return ccall((:gsw_add_barrier, _LIBGSWPATH), Void, (Ptr{Float64}, Float64, Float64, Float64, Float64, Float64, Float64, Ptr{Float64}), pointer(input_data), lon, lat, long_grid, lat_grid, dlong_grid, dlat_grid, pointer(output_data))
