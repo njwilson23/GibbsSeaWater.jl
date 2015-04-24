@@ -202,11 +202,6 @@ function run_gsw_test(funcsym, expected, args...)
     tol = testTolerances[funcsym]
     res = eval(funcsym)(args...)
     @test abs(res-expected) < tol
-    # if abs(res-expected) > tol
-    #     fail()
-    # else
-    #     pass()
-    # end
 end
 
 # Tests copied from gsw_check_functions.c
