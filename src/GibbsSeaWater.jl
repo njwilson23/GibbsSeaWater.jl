@@ -1,5 +1,5 @@
 module GibbsSeaWater
-using Base.beta
+import Base.beta
 
 export add_barrier, add_mean, adiabatic_lapse_rate_from_ct, alpha,
        alpha_on_beta, alpha_wrt_t_exact, beta_const_t_exact, beta, c_from_sp,
