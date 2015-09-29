@@ -9,8 +9,8 @@ if ~isdir("build")
     mkdir("build")
 end
 
-ext = @linux? (".so" : @osx? ( ".dylib" : @windows? ( ".dll" : "" )))
-if ext == ""
+ext = @linux? (".so" : @osx? ( ".so" : @windows? ( ".dll" : "none" )))
+if ext == "none"
     error("Platform not linux, OS X, or Windows")
 end
 
